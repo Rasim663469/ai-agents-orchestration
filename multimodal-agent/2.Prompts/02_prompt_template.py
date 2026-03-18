@@ -1,13 +1,16 @@
 #!/usr/bin/env python3
-"""
-PromptTemplate - Avec variables dynamiques
-"""
+
+import os
+
+from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
-from langchain.prompts import PromptTemplate
+from langchain_core.prompts import PromptTemplate 
+
+load_dotenv()
 
 llm = ChatOpenAI(
     base_url="https://openrouter.ai/api/v1",
-    api_key="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",
+    api_key=os.getenv("OPENROUTER_API_KEY") or os.getenv("OPENAI_API_KEY"),
     model="google/gemma-3-4b-it:free"
 )
 
