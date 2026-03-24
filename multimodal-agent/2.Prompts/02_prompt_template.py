@@ -3,18 +3,18 @@
 import os
 
 from dotenv import load_dotenv
-from langchain_openai import ChatOpenAI
-from langchain_core.prompts import PromptTemplate 
+from langchain_core.prompts import PromptTemplate
+from langchain_groq import ChatGroq
 
 load_dotenv()
 
-llm = ChatOpenAI(
-    base_url="https://openrouter.ai/api/v1",
-    api_key=os.getenv("OPENROUTER_API_KEY") or os.getenv("OPENAI_API_KEY"),
-    model="google/gemma-3-4b-it:free"
+llm = ChatGroq(
+    api_key=os.getenv("GROQ_API_KEY"),
+    model=os.getenv("VISION_MODEL", "meta-llama/llama-4-scout-17b-16e-instruct"),
+    temperature=float(os.getenv("CHAT_TEMPERATURE", "0.1")),
 )
 
-# Template 
+# Template
 template = PromptTemplate(
     input_variables=["sujet"],
     template="Explique-moi {sujet} en termes simples."
