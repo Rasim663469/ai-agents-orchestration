@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
+
 import os
+
 from dotenv import load_dotenv
 from langchain_groq import ChatGroq
 
-load_dotenv()
 
-# Configuration
+load_dotenv()
 
 llm = ChatGroq(
     api_key=os.getenv("GROQ_API_KEY"),
@@ -13,9 +14,7 @@ llm = ChatGroq(
     temperature=0.1,
 )
 
-# Prompt simple
-prompt = "Explique-moi en une phrase ce qu'est un LLM."
+prompt = "Explain what a Large Language Model is in one sentence."
 response = llm.invoke(prompt)
 
-print("Question:", prompt)
-print("\nRéponse:", response.content)
+print(response.content)

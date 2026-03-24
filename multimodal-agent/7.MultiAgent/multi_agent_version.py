@@ -26,7 +26,7 @@ load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent
 DEFAULT_IMAGE_PATH = BASE_DIR.parent.parent / "test" / "Maison.jpeg"
-DEFAULT_KNOWLEDGE_DIR = BASE_DIR / "knowledge_base"
+DEFAULT_KNOWLEDGE_DIR = BASE_DIR.parent / "6.AgentAvecRAG" / "knowledge_base"
 DEFAULT_CHROMA_DIR = BASE_DIR / ".chroma"
 
 
@@ -146,14 +146,17 @@ def build_retriever(knowledge_dir: Path):
     chunks = split_documents(documents)
     embeddings = build_embeddings()
     persist_directory = Path(
-        os.getenv("CHROMA_DIR", str(DEFAULT_CHROMA_DIR))
+        os.getenv("MULTI_CHROMA_DIR", str(DEFAULT_CHROMA_DIR))
     ).resolve()
     persist_directory.mkdir(parents=True, exist_ok=True)
 
     vector_store = Chroma.from_documents(
         documents=chunks,
         embedding=embeddings,
-        collection_name=os.getenv("CHROMA_COLLECTION", "rag_collection"),
+        collection_name=os.getenv(
+            "MULTI_CHROMA_COLLECTION",
+            "multi_agent_rag_collection",
+        ),
         persist_directory=str(persist_directory),
     )
 
@@ -244,15 +247,110 @@ Question: {question}
     )
 
 
+def build_multi_agent_chain(llm: ChatGroq, retriever):
+    vision_detail_prompt = PromptTemplate(
+        template="""
+Tu es un agent specialise dans la description detaillee d'un batiment a partir d'une image.
+
+Contexte:
+- Description initiale: {image_description}
+- Historique: {history}
+- Question: {question}
+
+Mission:
+- enrichir la description visuelle
+- rester factuel
+- signaler les incertitudes
+""".strip(),
+        input_variables=["image_description", "history", "question"],
+    )
+
+    compliance_prompt = PromptTemplate(
+        template="""
+Tu es un agent specialise en conformite et analyse metier du batiment.
+
+Contexte:
+- Description initiale: {image_description}
+- Historique: {history}
+- Contexte documentaire: {context}
+- Question: {question}
+
+Mission:
+- appliquer les regles de la base documentaire
+- relever les points de vigilance
+- citer les sources quand elles sont utilisees
+""".strip(),
+        input_variables=["image_description", "history", "context", "question"],
+    )
+
+    synthesis_prompt = PromptTemplate(
+        template="""
+Tu es l'agent coordinateur final.
+
+Tu dois fusionner:
+- description initiale: {image_description}
+- historique: {history}
+- contribution vision detail: {vision_detail}
+- contribution conformite: {compliance_review}
+- question utilisateur: {question}
+
+Regles:
+- reponds en francais
+- sois clair et utile
+- conserve les sources si elles sont pertinentes
+- ne parle pas d'agents dans la reponse finale
+""".strip(),
+        input_variables=[
+            "image_description",
+            "history",
+            "vision_detail",
+            "compliance_review",
+            "question",
+        ],
+    )
+
+    parser = StrOutputParser()
+
+    vision_detail_chain = vision_detail_prompt | llm | parser
+    compliance_chain = (
+        {
+            "context": RunnableLambda(
+                lambda x: format_docs(retriever.invoke(x["question"]))
+            ),
+            "question": RunnableLambda(lambda x: x["question"]),
+            "history": RunnableLambda(lambda x: x["history"]),
+            "image_description": RunnableLambda(lambda x: x["image_description"]),
+        }
+        | compliance_prompt
+        | llm
+        | parser
+    )
+
+    def run_multi_agent(payload: dict[str, str]) -> str:
+        vision_detail = vision_detail_chain.invoke(payload).strip()
+        compliance_review = compliance_chain.invoke(payload).strip()
+
+        final_payload = {
+            "image_description": payload["image_description"],
+            "history": payload["history"],
+            "vision_detail": vision_detail,
+            "compliance_review": compliance_review,
+            "question": payload["question"],
+        }
+        return (synthesis_prompt | llm | parser).invoke(final_payload).strip()
+
+    return RunnableLambda(run_multi_agent)
+
+
 def main() -> None:
     try:
         print("Initialisation du modele Groq...", flush=True)
         llm = build_llm()
-        knowledge_dir_value = os.getenv("KNOWLEDGE_DIR") or str(DEFAULT_KNOWLEDGE_DIR)
+        knowledge_dir_value = os.getenv("MULTI_KNOWLEDGE_DIR") or str(DEFAULT_KNOWLEDGE_DIR)
         knowledge_dir = Path(knowledge_dir_value).resolve()
         print(f"Chargement des documents RAG depuis: {knowledge_dir}", flush=True)
         retriever = build_retriever(knowledge_dir)
-        rag_chain = build_rag_chain(llm, retriever)
+        rag_chain = build_multi_agent_chain(llm, retriever)
     except Exception as exc:
         print(f"Erreur d'initialisation: {exc}")
         return
@@ -280,7 +378,7 @@ def main() -> None:
 
     history: list[tuple[str, str]] = [("assistant", image_description)]
 
-    print("Conversation ouverte sur cette image.")
+    print("Conversation multi-agent ouverte sur cette image.")
     print(f"Base RAG: {knowledge_dir}")
     print("Pose des questions sur l'image ou tape `exit` pour quitter.\n")
 

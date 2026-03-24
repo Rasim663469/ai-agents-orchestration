@@ -5,5 +5,5 @@ import runpy
 
 
 if __name__ == "__main__":
-    script_path = Path(__file__).resolve().parent / "5.MultiAgent" / "multi_agent_version.py"
+    script_path = Path(__file__).resolve().parent / "7.MultiAgent" / "multi_agent_version.py"
     runpy.run_path(str(script_path), run_name="__main__")

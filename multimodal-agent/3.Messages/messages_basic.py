@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
+
 import os
+
 from dotenv import load_dotenv
+from langchain_core.messages import HumanMessage
 from langchain_groq import ChatGroq
 
-load_dotenv()
 
-# Configuration
+load_dotenv()
 
 llm = ChatGroq(
     api_key=os.getenv("GROQ_API_KEY"),
@@ -13,9 +15,5 @@ llm = ChatGroq(
     temperature=0.1,
 )
 
-# Prompt simple
-prompt = "Explique-moi en une phrase ce qu'est un LLM."
-response = llm.invoke(prompt)
-
-print("Question:", prompt)
-print("\nRéponse:", response.content)
+response = llm.invoke([HumanMessage(content="What is an embedding?")])
+print(response.content)

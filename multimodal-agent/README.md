@@ -1,72 +1,109 @@
-# Projet Multi-Modal Agent - LangChain
+# Projet Multi-Modal Agent
 
 ## Description
-Projet académique sur l'orchestration d'agents IA utilisant le framework LangChain.
+Projet academique de progression sur les agents IA.
 
-**Objectif :** Créer une application multi-modale capable de :
-- Décrire des images
-- Orchestrer différents agents IA spécialisés
+Le cas d'usage retenu est l'analyse d'images de batiments avec :
+- description visuelle
+- conversation multi-tour
+- RAG documentaire
+- version multi-agent
+- interface desktop
 
-## Framework choisi
-- **LangChain** / **LangGraph**
-- **OpenRouter** (API gratuite pour LLMs)
+Le projet a d'abord ete pense comme une application generale d'analyse d'image. Au cours du developpement, nous avons choisi de le specialiser dans le domaine du batiment afin de disposer d'un cas d'usage plus concret, de rendre le RAG reellement utile grace a une base documentaire metier, et de justifier une architecture multi-agent avec des roles specialises.
 
-## Structure du projet
-- `run_agent.py`: fichier main
-- `1.LLMs/`: notes ou essais de modeles
-- `2.Prompts/`: scripts simples d'apprentissage LangChain
-- `3.Agent/first-agent.py`: premier exemple d'agent
-- `4.AgentAvecRAG/rag_conversation_agent.py`: agent principal image + RAG
-- `4.AgentAvecRAG/knowledge_base/`: documents utilises par le RAG
-- `5.MultiAgent/multi_agent_image_rag.py`: version multi-agent
-- `../test/`: images de test
-- `.venv/`: unique environnement virtuel du projet
+## Frameworks Et Outils
+- Framework principal: LangChain
+- LLM principal: Groq
+- Vector database: Chroma
+- Embeddings: HuggingFace
+- Interface desktop: PySide6
 
+## Structure Du Projet
+- `1.LLMs/`: premiers tests de modeles
+- `2.Prompts/`: prompts simples, templates et mini-projet prompt
+- `3.Messages/`: manipulation de messages et conversation
+- `4.Agent/`: premier agent simple
+- `5.VectorDB/`: embeddings, vector store, retrieval et RAG simple
+- `6.AgentAvecRAG/`: agent principal image + RAG
+- `7.MultiAgent/`: orchestration multi-agent
+- `8.Interface/`: interface desktop locale
+- `run_agent.py`: point d'entree rapide vers la version multi-agent terminal
+- `requirements.txt`: dependances Python
+- `.env.example`: configuration type
+- `TEAM.md`: informations equipe
+- `PROJECT_PLAN.md`: progression et phases
+- `CHECKLIST_STATUS.md`: suivi des consignes
+- `SOURCES.md`: references utilisees
 
-Lancement:
+## Versions Disponibles
+
+### 1. Agent Simple
+- fichier: `4.Agent/first-agent.py`
+- objectif: premier agent minimal
+
+### 2. Agent Avec RAG
+- fichier: `6.AgentAvecRAG/rag_conversation_agent.py`
+- objectif: analyser une image puis enrichir la reponse avec la knowledge base batiment
+
+### 3. Version Multi-Agent
+- fichier: `7.MultiAgent/multi_agent_version.py`
+- objectif: decomposer la reponse en plusieurs contributions specialisees avant synthese
+
+### 4. Version Interface Desktop
+- dossier: `8.Interface/`
+- objectif: utiliser le multi-agent dans une application locale
+
+## Installation
 
 ```bash
 cd Agent/multimodal-agent
+python3 -m venv .venv
+./.venv/bin/pip install -r requirements.txt
 cp .env.example .env
+```
+
+## Lancement
+
+### Terminal Multi-Agent
+```bash
+cd Agent/multimodal-agent
 ./.venv/bin/python run_agent.py
 ```
 
-Notes:
-- Le script demande un chemin d'image puis ouvre une conversation sur cette image.
-- Le chat conserve le contexte de la session pour les questions suivantes.
-- Utilise un modele multimodal Groq pour l'analyse d'image.
-- Le RAG lit les documents du dossier `4.AgentAvecRAG/knowledge_base/`.
-- Les formats supportes par defaut sont `.txt`, `.md`, `.csv`, `.json` et `.pdf`.
-- Le RAG utilise par defaut `HuggingFaceEmbeddings` avec `sentence-transformers/all-MiniLM-L6-v2`.
-- Le vector store utilise Chroma
-
-## Version Multi-Agent
-
-Lancement:
-
+### Agent Avec RAG
 ```bash
 cd Agent/multimodal-agent
-./.venv/bin/python 5.MultiAgent/rag_conversation_agent.py
+./.venv/bin/python 6.AgentAvecRAG/rag_conversation_agent.py
 ```
 
-Principe:
-- cette version repart du socle `4.AgentAvecRAG/rag_conversation_agent.py`
-- une contribution specialisee detaille l'analyse visuelle
-- une contribution specialisee applique le RAG metier
-- une synthese finale fusionne les deux
-
-Ce que fait la version multi-agent en interne :
-
-- un bloc produit la description visuelle
-- un bloc enrichit l’analyse détaillée
-- un bloc applique le contexte RAG bâtiment
-- un bloc final fusionne tout en une seule réponse
-
-## Dependance
-
-Installation dans un nouvel environnement:
-
+### Interface Desktop
 ```bash
-python3 -m venv .venv
-./.venv/bin/pip install -r requirements.txt
+cd Agent/multimodal-agent
+./.venv/bin/python 8.Interface/app.py
 ```
+
+## Knowledge Base
+La knowledge base est orientee batiment et contient:
+- regles de conformite
+- checklist d'inspection
+- defauts frequents
+- glossaire metier
+- cas exemples
+
+## Etat Du Projet
+Le projet est structure comme une progression de laboratoire:
+- bases LLM
+- prompts
+- messages
+- vector databases
+- agent simple
+- agent avec RAG
+- multi-agent
+- interface
+
+Pour les exigences academiques, voir:
+- `TEAM.md`
+- `PROJECT_PLAN.md`
+- `CHECKLIST_STATUS.md`
+- `SOURCES.md`
