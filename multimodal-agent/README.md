@@ -33,7 +33,6 @@ Le projet a d'abord ete pense comme une application generale d'analyse d'image. 
 - `.env.example`: configuration type
 - `TEAM.md`: informations equipe
 - `PROJECT_PLAN.md`: progression et phases
-- `CHECKLIST_STATUS.md`: suivi des consignes
 - `SOURCES.md`: references utilisees
 
 ## Versions Disponibles
@@ -105,5 +104,4 @@ Le projet est structure comme une progression de laboratoire:
 Pour les exigences academiques, voir:
 - `TEAM.md`
 - `PROJECT_PLAN.md`
-- `CHECKLIST_STATUS.md`
 - `SOURCES.md`
