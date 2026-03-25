@@ -271,7 +271,21 @@ def main() -> None:
     raw_image_path = input(f"Chemin de l'image [{DEFAULT_IMAGE_PATH}] > ").strip()
     image_path = (
         Path(raw_image_path).expanduser().resolve()
-        if raw_image_path
+        if raw_image_path1. Expliquer la mémoire + chat
+Tu dis quelque chose comme :
+
+“Dans cette partie, on montre comment une conversation peut être conservée dans le temps. L’idée est que l’agent ne répond pas seulement à une question isolée, mais qu’il garde l’historique des échanges pour comprendre le contexte.”
+
+Puis tu montres dans conversation.py :
+
+HumanMessage
+AIMessage
+la liste conversation
+llm.invoke(conversation)
+Message à faire passer :
+
+la mémoire ici est représentée par l’historique des messages
+plus tard, ce principe est repris dans AgentAvecRAG avec history
         else DEFAULT_IMAGE_PATH.resolve()
     )
 

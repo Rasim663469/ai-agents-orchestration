@@ -16,4 +16,4 @@
 - ChatGPT / coding assistant support for adaptation and debugging
 
 ## Rule
-Les ressources externes sont utilisees comme support de comprehension et d'adaptation. Le code du projet doit rester compris, relu et adapte au cas d'usage du groupe.
+Les ressources externes sont utilisees comme support de comprehension et d'adaptation.

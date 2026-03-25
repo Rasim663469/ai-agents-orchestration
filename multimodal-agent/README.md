@@ -10,8 +10,6 @@ Le cas d'usage retenu est l'analyse d'images de batiments avec :
 - version multi-agent
 - interface desktop
 
-Le projet a d'abord ete pense comme une application generale d'analyse d'image. Au cours du developpement, nous avons choisi de le specialiser dans le domaine du batiment afin de disposer d'un cas d'usage plus concret, de rendre le RAG reellement utile grace a une base documentaire metier, et de justifier une architecture multi-agent avec des roles specialises.
-
 ## Frameworks Et Outils
 - Framework principal: LangChain
 - LLM principal: Groq
@@ -33,7 +31,6 @@ Le projet a d'abord ete pense comme une application generale d'analyse d'image. 
 - `.env.example`: configuration type
 - `TEAM.md`: informations equipe
 - `PROJECT_PLAN.md`: progression et phases
-- `CHECKLIST_STATUS.md`: suivi des consignes
 - `SOURCES.md`: references utilisees
 
 ## Versions Disponibles
@@ -105,5 +102,4 @@ Le projet est structure comme une progression de laboratoire:
 Pour les exigences academiques, voir:
 - `TEAM.md`
 - `PROJECT_PLAN.md`
-- `CHECKLIST_STATUS.md`
 - `SOURCES.md`
